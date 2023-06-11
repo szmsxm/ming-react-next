@@ -2,9 +2,10 @@
 import { ReactElement } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import type { FC } from "react";
-import style from "styled-components";
 import { useRouter } from "next/navigation";
 import { LoginWrapper } from "./style";
+import Srequests from "@/serviece";
+import { setCookie } from "cookies-next";
 export interface IProps {
   children?: ReactElement;
 }
@@ -13,8 +14,19 @@ const Login: FC<IProps> = function (props) {
   const router = useRouter();
 
   const onFinish = (values: any) => {
-    console.log("Success:", values);
-    router.push("/");
+    Srequests.post("/auth/login", { username: "asd", password: "1asd34" }).then(
+      (res: any) => {
+        console.log(res);
+
+        if (res.code == 200) {
+          setCookie("token", res.data, { maxAge: 1000 });
+          router.push("/");
+        }
+      }
+    );
+
+    // console.log("Success:", values);
+    // router.push("/");
   };
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
