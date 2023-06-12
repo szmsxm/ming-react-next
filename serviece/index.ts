@@ -5,13 +5,18 @@ import type {
   InternalAxiosRequestConfig,
 } from "axios";
 import axios from "axios";
+import { getCookie } from "cookies-next";
 class Srequest {
   instance: AxiosInstance;
   constructor(config: AxiosRequestConfig) {
     this.instance = axios.create(config);
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        console.log("请求拦截");
+        // console.log("请求拦截");
+        const token = getCookie("token");
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
 
         return config;
       }

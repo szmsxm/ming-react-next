@@ -6,24 +6,25 @@ import { useRouter } from "next/navigation";
 import { LoginWrapper } from "./style";
 import Srequests from "@/serviece";
 import { setCookie } from "cookies-next";
-export interface IProps {
-  children?: ReactElement;
-}
-const Login: FC<IProps> = function (props) {
-  const { children } = props;
+
+const Login: FC = function (props) {
   const router = useRouter();
 
   const onFinish = (values: any) => {
-    Srequests.post("/auth/login", { username: "asd", password: "1asd34" }).then(
-      (res: any) => {
-        console.log(res);
+    console.log(values);
 
-        if (res.code == 200) {
-          setCookie("token", res.data, { maxAge: 1000 });
-          router.push("/");
-        }
+    Srequests.post("/auth/login", {
+      username: values.username,
+      password: values.password,
+    }).then((res: any) => {
+      console.log(res);
+
+      if (res.code == 200) {
+        setCookie("token", res.data, { maxAge: 1000 });
+        router.push("/chat");
+        localStorage.setItem("userName", values.username);
       }
-    );
+    });
 
     // console.log("Success:", values);
     // router.push("/");
@@ -46,9 +47,9 @@ const Login: FC<IProps> = function (props) {
           autoComplete="off"
         >
           <Form.Item
-            label="帐号"
+            label="用户名"
             name="username"
-            rules={[{ required: true, message: "请输入帐号！" }]}
+            rules={[{ required: true, message: "请输入用户名！" }]}
           >
             <Input />
           </Form.Item>
